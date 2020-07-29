@@ -39,7 +39,7 @@ public class CourseController {
         return new ResponseEntity<>("Course with ID: ".concat(id).concat(" was deleted"), HttpStatus.OK);
     }
 
-    @PostMapping("/{course}")
+    @PostMapping
     public ResponseEntity<?> createCourse(@RequestBody Course course) {
         Course createdCourse = courseService.saveOrUpdateCourse(course);
 
