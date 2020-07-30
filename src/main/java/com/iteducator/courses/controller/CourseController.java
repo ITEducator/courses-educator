@@ -21,8 +21,10 @@ public class CourseController {
     }
 
     @GetMapping("/all")
-    public List<Course> getCourses() {
-        return courseService.findAll();
+    public ResponseEntity<List<Course>> getCourses() {
+        List<Course> courses = courseService.findAll();
+
+        return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
