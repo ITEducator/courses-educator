@@ -21,6 +21,7 @@ public class Course {
     private String subtitle;
     private String category;
     private String description;
+    private byte[] image;
     private User author;
     private BigDecimal price;
     private List<String> requirements;

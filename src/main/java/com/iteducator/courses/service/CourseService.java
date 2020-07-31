@@ -47,6 +47,13 @@ public class CourseService {
         return courseRepository.findById(course.getId())
                 .map(existingCourse -> {
                     existingCourse.setTitle(course.getTitle());
+                    existingCourse.setSubtitle(course.getSubtitle());
+                    existingCourse.setAuthor(course.getAuthor());
+                    existingCourse.setCategory(course.getCategory());
+                    existingCourse.setDescription(course.getDescription());
+                    existingCourse.setImage(course.getImage());
+                    existingCourse.setPrice(course.getPrice());
+                    existingCourse.setRequirements(course.getRequirements());
                     return courseRepository.save(existingCourse);
                 })
                 .orElseGet(() -> {
