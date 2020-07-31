@@ -6,22 +6,22 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "courses")
-public class Course {
+@Document(collection = "users")
+public class User {
 
     @Id
     private String id;
-    private String title;
-    private String subtitle;
-    private String category;
-    private String description;
-    private User author;
-    private BigDecimal price;
-    private List<String> requirements;
+    private String mail;
+    private String password;
+    private String firstName;
+    private String lastName;
+    private String biography;
+    private byte[] avatar;
+    private List<Course> courses;
+    private List<Course> purchases;
 }

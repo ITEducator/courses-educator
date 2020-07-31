@@ -28,7 +28,7 @@ public class CourseService {
     public Course findById(String id) {
         Optional<Course> course = courseRepository.findById(id);
 
-        if (!course.isPresent()) {
+        if (course.isEmpty()) {
             throw new RuntimeException("Course ID - ".concat(id).concat(" doesn't exist"));
         }
 
@@ -46,7 +46,7 @@ public class CourseService {
     public Course saveOrUpdateCourse(Course course) {
         return courseRepository.findById(course.getId())
                 .map(existingCourse -> {
-                    existingCourse.setText(course.getText());
+                    existingCourse.setTitle(course.getTitle());
                     return courseRepository.save(existingCourse);
                 })
                 .orElseGet(() -> {
