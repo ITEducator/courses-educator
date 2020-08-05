@@ -1,7 +1,10 @@
 package com.iteducator.courses.controller;
 
+import com.google.gson.Gson;
 import com.iteducator.courses.model.Course;
+import com.iteducator.courses.model.Photo;
 import com.iteducator.courses.service.CourseService;
+import com.iteducator.courses.service.PhotoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,9 +12,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,9 +24,11 @@ import java.util.List;
 @RequestMapping("/api/courses")
 public class CourseController {
 
+    private final PhotoService photoService;
     private final CourseService courseService;
 
-    public CourseController(CourseService courseService) {
+    public CourseController(PhotoService photoService, CourseService courseService) {
+        this.photoService = photoService;
         this.courseService = courseService;
     }
 
@@ -47,8 +53,15 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCourse(@RequestBody Course course) {
-        Course createdCourse = courseService.saveOrUpdateCourse(course);
+    public ResponseEntity<?> createCourse(@RequestParam String course,
+                                          @RequestParam final MultipartFile image) {
+        Photo photo = photoService.createPhoto(image);
+
+        Course courseObj = new Gson().fromJson(course, Course.class);
+
+        courseObj.setImage(photo);
+
+        Course createdCourse = courseService.saveOrUpdateCourse(courseObj);
 
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
