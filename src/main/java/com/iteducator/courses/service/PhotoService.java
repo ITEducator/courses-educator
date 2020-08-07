@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @Service
 public class PhotoService {
+
     private final PhotoRepository photoRepository;
 
     public PhotoService(PhotoRepository photoRepository) {

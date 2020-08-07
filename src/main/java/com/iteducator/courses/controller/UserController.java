@@ -22,15 +22,15 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private UserService userService;
-    private PhotoService photoService;
+    private final UserService userService;
+    private final PhotoService photoService;
 
     public UserController(UserService userService, PhotoService photoService) {
         this.userService = userService;
         this.photoService = photoService;
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<?> createUser(@RequestParam String user,
                                         @RequestParam MultipartFile image){
         Photo photo = photoService.createPhoto(image);
@@ -40,7 +40,7 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<User>> getCourses() {
         List<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
