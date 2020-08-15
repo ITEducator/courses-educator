@@ -1,5 +1,6 @@
 package com.iteducator.courses.service;
 
+import com.iteducator.courses.exception.CourseException;
 import com.iteducator.courses.model.Course;
 import com.iteducator.courses.repository.CourseRepository;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ public class CourseService {
     public Course findById(String id) {
         Optional<Course> course = courseRepository.findById(id);
 
-        if (course.isEmpty()) {
-            throw new RuntimeException("Course ID - ".concat(id).concat(" doesn't exist"));
+        if (course.isEmpty()) {             
+            throw new CourseException(String.format("Course with ID - %s doesn't exist", id));
         }
 
         // validate that course exists in user's library...
@@ -58,7 +59,7 @@ public class CourseService {
                     return courseRepository.save(existingCourse);
                 })
                 .orElseGet(() -> {
-                    course.setId(course.getId() == null ? UUID.randomUUID().toString() : course.getId());
+                    course.setId(UUID.randomUUID().toString());
                     return courseRepository.save(course);
                 });
     }
