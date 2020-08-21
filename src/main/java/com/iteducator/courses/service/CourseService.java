@@ -15,7 +15,8 @@ public class CourseService {
     private final PhotoService photoService;
     private final CourseRepository courseRepository;
 
-    public CourseService(PhotoService photoService, CourseRepository courseRepository) {
+    public CourseService(PhotoService photoService,
+                         CourseRepository courseRepository) {
         this.photoService = photoService;
         this.courseRepository = courseRepository;
     }
@@ -30,13 +31,11 @@ public class CourseService {
 
     public Course findById(String id) {
         Optional<Course> course = courseRepository.findById(id);
-
-        if (course.isEmpty()) {             
-            throw new CourseException(String.format("Course with ID - %s doesn't exist", id));
+        if (course.isEmpty()) {
+            throw new RuntimeException("Course ID - "
+                    .concat(id).concat(" doesn't exist"));
         }
-
         // validate that course exists in user's library...
-
         return course.get();
     }
 
@@ -55,11 +54,13 @@ public class CourseService {
                     existingCourse.setCategory(course.getCategory());
                     existingCourse.setDescription(course.getDescription());
                     existingCourse.setRequirements(course.getRequirements());
-                    existingCourse.setImage(photoService.overrideImage(course.getImage(), existingCourse.getImage()));
+                    existingCourse.setImage(photoService.overrideImage(
+                            course.getImage(), existingCourse.getImage()));
                     return courseRepository.save(existingCourse);
                 })
                 .orElseGet(() -> {
-                    course.setId(UUID.randomUUID().toString());
+                    course.setId(course.getId() == null ?
+                            UUID.randomUUID().toString() : course.getId());
                     return courseRepository.save(course);
                 });
     }

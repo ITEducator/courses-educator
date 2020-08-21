@@ -25,14 +25,15 @@ public class UserController {
     private final UserService userService;
     private final PhotoService photoService;
 
-    public UserController(UserService userService, PhotoService photoService) {
+    public UserController(UserService userService,
+                          PhotoService photoService) {
         this.userService = userService;
         this.photoService = photoService;
     }
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestParam String user,
-                                        @RequestParam MultipartFile image){
+                                        @RequestParam MultipartFile image) {
         Photo photo = photoService.createPhoto(image);
         User userObj = new Gson().fromJson(user, User.class);
         userObj.setAvatar(photo);

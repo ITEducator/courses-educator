@@ -33,7 +33,8 @@ public class PhotoService {
     }
 
     public Photo overrideImage(Photo image, Photo existingImage) {
-        image.setId(existingImage != null ? existingImage.getId() : UUID.randomUUID().toString());
+        image.setId(existingImage != null ?
+                existingImage.getId() : UUID.randomUUID().toString());
         return photoRepository.save(image);
     }
 

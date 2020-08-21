@@ -1,5 +1,6 @@
 package com.iteducator.courses.controller;
 
+import com.google.gson.Gson;
 import com.iteducator.courses.model.Course;
 import com.iteducator.courses.model.Photo;
 import com.iteducator.courses.service.CourseService;
@@ -45,15 +46,14 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<Course> getCourse(@PathVariable String id) {
         Course course = courseService.findById(id);
-
         return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable String id) {
         courseService.deleteById(id);
-
-        return new ResponseEntity<>("Course with ID: ".concat(id).concat(" was deleted"), HttpStatus.OK);
+        return new ResponseEntity<>("Course with ID: "
+                .concat(id).concat(" was deleted"), HttpStatus.OK);
     }
 
     @PostMapping
@@ -66,11 +66,9 @@ public class CourseController {
             return errorMap;
         }
         Photo photo = photoService.createPhoto(image);
-
-        course.setImage(photo);
-
-        Course createdCourse = courseService.saveOrUpdateCourse(course);
-
+        Course courseObj = new Gson().fromJson(course, Course.class);
+        courseObj.setImage(photo);
+        Course createdCourse = courseService.saveOrUpdateCourse(courseObj);
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
 }
