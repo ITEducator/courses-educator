@@ -27,7 +27,8 @@ public class CourseController {
     private final PhotoService photoService;
     private final CourseService courseService;
 
-    public CourseController(PhotoService photoService, CourseService courseService) {
+    public CourseController(PhotoService photoService,
+                            CourseService courseService) {
         this.photoService = photoService;
         this.courseService = courseService;
     }
@@ -41,28 +42,23 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<Course> getCourse(@PathVariable String id) {
         Course course = courseService.findById(id);
-
         return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable String id) {
         courseService.deleteById(id);
-
-        return new ResponseEntity<>("Course with ID: ".concat(id).concat(" was deleted"), HttpStatus.OK);
+        return new ResponseEntity<>("Course with ID: "
+                .concat(id).concat(" was deleted"), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> createCourse(@RequestParam String course,
                                           @RequestParam final MultipartFile image) {
         Photo photo = photoService.createPhoto(image);
-
         Course courseObj = new Gson().fromJson(course, Course.class);
-
         courseObj.setImage(photo);
-
         Course createdCourse = courseService.saveOrUpdateCourse(courseObj);
-
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
 }
