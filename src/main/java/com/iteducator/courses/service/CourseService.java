@@ -11,9 +11,11 @@ import java.util.UUID;
 @Service
 public class CourseService {
 
+    private final PhotoService photoService;
     private final CourseRepository courseRepository;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(PhotoService photoService, CourseRepository courseRepository) {
+        this.photoService = photoService;
         this.courseRepository = courseRepository;
     }
 
@@ -39,7 +41,6 @@ public class CourseService {
 
     public void deleteById(String id) {
         Course course = findById(id);
-
         courseRepository.delete(course);
     }
 
@@ -47,18 +48,17 @@ public class CourseService {
         return courseRepository.findById(course.getId())
                 .map(existingCourse -> {
                     existingCourse.setTitle(course.getTitle());
-                    existingCourse.setSubtitle(course.getSubtitle());
+                    existingCourse.setPrice(course.getPrice());
                     existingCourse.setAuthor(course.getAuthor());
+                    existingCourse.setSubtitle(course.getSubtitle());
                     existingCourse.setCategory(course.getCategory());
                     existingCourse.setDescription(course.getDescription());
-                    existingCourse.setImage(course.getImage());
-                    existingCourse.setPrice(course.getPrice());
                     existingCourse.setRequirements(course.getRequirements());
+                    existingCourse.setImage(photoService.overrideImage(course.getImage(), existingCourse.getImage()));
                     return courseRepository.save(existingCourse);
                 })
                 .orElseGet(() -> {
-                    String id = course.getId() == null ? UUID.randomUUID().toString() : course.getId();
-                    course.setId(id);
+                    course.setId(course.getId() == null ? UUID.randomUUID().toString() : course.getId());
                     return courseRepository.save(course);
                 });
     }

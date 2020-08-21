@@ -21,7 +21,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String biography;
-    private byte[] avatar;
+    private Photo avatar;
     private List<Course> courses;
     private List<Course> purchases;
 }

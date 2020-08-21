@@ -3,26 +3,18 @@ package com.iteducator.courses.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "courses")
-public class Course {
+@Document(collection = "photos")
+public class Photo {
 
     @Id
     private String id;
     private String title;
-    private String subtitle;
-    private String category;
-    private String description;
-    private Photo image;
-    private User author;
-    private BigDecimal price;
-    private List<String> requirements;
+    private Binary image;
 }
