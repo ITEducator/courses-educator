@@ -1,11 +1,10 @@
 package com.iteducator.courses.controller;
 
-import com.google.gson.Gson;
 import com.iteducator.courses.model.Course;
-import com.iteducator.courses.model.Photo;
 import com.iteducator.courses.service.CourseService;
 import com.iteducator.courses.service.PhotoService;
 import com.iteducator.courses.util.ValidationService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,7 +30,9 @@ public class CourseController {
     private final CourseService courseService;
     private final ValidationService validationService;
 
-    public CourseController(PhotoService photoService, CourseService courseService, ValidationService validationService) {
+    public CourseController(PhotoService photoService,
+                            CourseService courseService,
+                            ValidationService validationService) {
         this.photoService = photoService;
         this.courseService = courseService;
         this.validationService = validationService;
@@ -52,23 +53,20 @@ public class CourseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable String id) {
         courseService.deleteById(id);
-        return new ResponseEntity<>("Course with ID: "
-                .concat(id).concat(" was deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(String.format("Course with ID: %s was deleted", id),
+                HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> createCourse(@Valid @RequestPart Course course,
                                           BindingResult result,
                                           @RequestPart final MultipartFile image) {
-        ResponseEntity<?> errorMap = validationService.MapValidationService(result);
-
+        ResponseEntity<?> errorMap = validationService.mapValidationService(result);
         if (errorMap != null) {
             return errorMap;
         }
-        Photo photo = photoService.createPhoto(image);
-        Course courseObj = new Gson().fromJson(course, Course.class);
-        courseObj.setImage(photo);
-        Course createdCourse = courseService.saveOrUpdateCourse(courseObj);
+        course.setImage(photoService.convertToPhoto(image));
+        Course createdCourse = courseService.saveOrUpdateCourse(course);
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
 }

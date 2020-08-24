@@ -6,22 +6,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ValidationService {
 
-    public ResponseEntity<?> MapValidationService(BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<>();
-            for (FieldError error : result.getFieldErrors()) {
-                errorMap.put(error.getField(), error.getDefaultMessage());
-            }
-
-            return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
-        }
-
-        return null;
+    public ResponseEntity<?> mapValidationService(BindingResult result) {
+        return result.hasErrors()
+                ? new ResponseEntity<>(result.getFieldErrors().stream()
+                .filter(error -> error.getDefaultMessage() != null)
+                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage)), HttpStatus.BAD_REQUEST)
+                : null;
     }
 }
