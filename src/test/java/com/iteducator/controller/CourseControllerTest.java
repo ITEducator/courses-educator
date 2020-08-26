@@ -50,11 +50,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class CourseControllerTest {
 
-    public static final String ZERO = "0";
-    public static final String ONE = "1";
-    public static final String FIVE_HUNDRED = "500";
-    public static final String FILENAME = "filename.png";
-
     private MockMvc mockMvc;
     private List<Course> courses;
     private PhotoService photoService;
@@ -89,20 +84,20 @@ public class CourseControllerTest {
     @Test
     public void testGetCourse() throws Exception {
         Course course = courses.get(1);
-        Mockito.when(courseRepository.findById(ONE)).thenReturn(Optional.ofNullable(course));
-        this.mockMvc.perform(get("/api/courses/{id}", ONE))
+        Mockito.when(courseRepository.findById("1")).thenReturn(Optional.ofNullable(course));
+        this.mockMvc.perform(get("/api/courses/{id}", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(new Gson().toJson(course)))
                 .andDo(MockMvcResultHandlers.print());
 
-        Mockito.verify(courseRepository, Mockito.times(1)).findById(ONE);
+        Mockito.verify(courseRepository, Mockito.times(1)).findById("1");
         Mockito.verifyNoMoreInteractions(courseRepository);
     }
 
     @Test
     public void testGetCourseWithWrongId() throws Exception {
-        Mockito.when(courseRepository.findById(FIVE_HUNDRED)).thenThrow(CourseException.class);
-        MvcResult result = this.mockMvc.perform(get("/api/courses/{id}/", FIVE_HUNDRED))
+        Mockito.when(courseRepository.findById("500")).thenThrow(CourseException.class);
+        MvcResult result = this.mockMvc.perform(get("/api/courses/{id}/", "500"))
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -111,27 +106,27 @@ public class CourseControllerTest {
                 (CourseException) result.getResolvedException());
         exception.ifPresent((e) -> Assert.assertThat(e, is(notNullValue())));
         exception.ifPresent((e) -> Assert.assertThat(e, is(instanceOf(CourseException.class))));
-        Mockito.verify(courseRepository, Mockito.times(1)).findById(FIVE_HUNDRED);
+        Mockito.verify(courseRepository, Mockito.times(1)).findById("500");
         Mockito.verifyNoMoreInteractions(courseRepository);
     }
 
     @Test
     public void testDeleteCourse() throws Exception {
         Course course = courses.get(0);
-        Mockito.when(courseRepository.findById(ZERO)).thenReturn(Optional.ofNullable(course));
-        this.mockMvc.perform(delete("/api/courses/{id}", ZERO))
+        Mockito.when(courseRepository.findById("0")).thenReturn(Optional.ofNullable(course));
+        this.mockMvc.perform(delete("/api/courses/{id}", "0"))
                 .andExpect(status().isOk());
 
         assert course != null;
-        Mockito.verify(courseRepository, Mockito.times(1)).findById(ZERO);
+        Mockito.verify(courseRepository, Mockito.times(1)).findById("0");
         Mockito.verify(courseRepository, Mockito.times(1)).delete(course);
         Mockito.verifyNoMoreInteractions(courseRepository);
     }
 
     @Test
     public void testDeleteCourseWithWrongId() throws Exception {
-        Mockito.when(courseRepository.findById(FIVE_HUNDRED)).thenThrow(CourseException.class);
-        MvcResult result = this.mockMvc.perform(delete("/api/courses/{id}", FIVE_HUNDRED))
+        Mockito.when(courseRepository.findById("500")).thenThrow(CourseException.class);
+        MvcResult result = this.mockMvc.perform(delete("/api/courses/{id}", "500"))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
@@ -139,15 +134,15 @@ public class CourseControllerTest {
                 (CourseException) result.getResolvedException());
         exception.ifPresent((e) -> Assert.assertThat(e, is(notNullValue())));
         exception.ifPresent((e) -> Assert.assertThat(e, is(instanceOf(CourseException.class))));
-        Mockito.verify(courseRepository, Mockito.times(1)).findById(FIVE_HUNDRED);
+        Mockito.verify(courseRepository, Mockito.times(1)).findById("500");
         Mockito.verifyNoMoreInteractions(courseRepository);
     }
 
     @Test
     public void testCreateCourse() throws Exception {
         Course course = courses.get(1);
-        MockMultipartFile image = new MockMultipartFile("image", FILENAME,
-                "text/plain", ONE.getBytes());
+        MockMultipartFile image = new MockMultipartFile("image", "filename.png",
+                "text/plain", "1".getBytes());
         MockMultipartFile courseJson = new MockMultipartFile("course", "",
                 "application/json", new Gson().toJson(course).getBytes());
 
@@ -161,15 +156,15 @@ public class CourseControllerTest {
                 .andReturn();
 
         Mockito.verify(courseRepository, Mockito.times(1)).save(course);
-        Mockito.verify(courseRepository, Mockito.times(1)).findById(ONE);
+        Mockito.verify(courseRepository, Mockito.times(1)).findById("1");
         Mockito.verifyNoMoreInteractions(courseRepository);
     }
 
     @Test
     public void testErrorsCreateOrUpdateCourse() throws Exception {
         Course course = new Course();
-        MockMultipartFile image = new MockMultipartFile("image", FILENAME,
-                "text/plain", ONE.getBytes());
+        MockMultipartFile image = new MockMultipartFile("image", "filename.png",
+                "text/plain", "1".getBytes());
         MockMultipartFile courseJson = new MockMultipartFile("course", "",
                 "application/json", new Gson().toJson(course).getBytes());
 
