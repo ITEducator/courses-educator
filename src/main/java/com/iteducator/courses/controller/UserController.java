@@ -34,7 +34,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestParam String user,
                                         @RequestParam MultipartFile image) {
-        Photo photo = photoService.createPhoto(image);
+        Photo photo = photoService.convertToPhoto(image);
         User userObj = new Gson().fromJson(user, User.class);
         userObj.setAvatar(photo);
         User createdUser = userService.createUser(userObj);
